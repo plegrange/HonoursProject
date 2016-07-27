@@ -1,6 +1,7 @@
 package Defragmentation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -52,6 +53,11 @@ public class Selector {
         return best;
     }
 
+    public LinkTable getBest(List<LinkTable> list){
+        Collections.sort(list);
+        return list.get(0);
+    }
+
     private LinkTable removeRandom(List<LinkTable> list) {
         int random = (new Random()).nextInt(list.size());
         LinkTable toRemove = list.get(random);
@@ -74,19 +80,15 @@ public class Selector {
 
     public List<LinkTable> selectBestIndividuals(int alpha) {
         List<LinkTable> bestList = new ArrayList<>();
-        while (bestList.size() < alpha) {
-            double bestFrag = 999;
-            LinkTable bestTable = null;
-            for (LinkTable table : listA) {
-                if (table.getFragmentation() < bestFrag) {
-                    bestTable = table;
-                    bestFrag = bestTable.getFragmentation();
-                    listA.remove(table);
-                }
-            }
-            bestList.add(bestTable);
+        Collections.sort(listA);
+        for (int i = 0; i < alpha; i++) {
+            bestList.add(listA.get(i));
         }
         return bestList;
+    }
+
+    private void remove(LinkTable table) {
+        listA.remove(table);
     }
 
     public List<LinkTable> selectRandomIndividuals(int a) {

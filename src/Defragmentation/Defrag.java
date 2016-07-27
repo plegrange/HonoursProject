@@ -35,5 +35,6 @@ public class Defrag {
             e.printStackTrace();
         }*/
         geneticProgram = new GeneticProgram(linkTable);
+        linkTable = geneticProgram.linkTable;
     }
 }

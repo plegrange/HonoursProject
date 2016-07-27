@@ -140,7 +140,7 @@ public class LinkTable implements Comparable {
     }
 
     public void displayFitness() {
-        System.out.println(fragmentation);
+        System.out.println("Fragmentation: " + fragmentation);
     }
 
     public String getTableEntry(int i, int j) {
@@ -184,11 +184,20 @@ public class LinkTable implements Comparable {
     }
 
     private void updateLightPaths(int j) {
-        String cur = "";
+        String cur = "-";
         for (int i = 0; i < linkIDs.size(); i++) {
             if (!table[i][j].equals(cur)) {
-                getLightPath(table[i][j]).setWavelength(wavelengths.get(j));
+                changeLightPathWavelength(getTableEntry(i,j),wavelengths.get(j));
+                //getLightPath(table[i][j]).setWavelength(wavelengths.get(j));
                 cur = table[i][j];
+            }
+        }
+    }
+
+    private void changeLightPathWavelength(String id, double wavelength){
+        for (LightPath lightPath : lightPaths) {
+            if (Objects.equals(lightPath.id, id)) {
+                lightPath.setWavelength(wavelength);
             }
         }
     }
@@ -209,9 +218,9 @@ public class LinkTable implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        if (this.fragmentation < ((LinkTable) o).fragmentation) {
+        if (this.fragmentation > ((LinkTable) o).fragmentation) {
             return 1;
-        } else if (this.fragmentation > ((LinkTable) o).fragmentation)
+        } else if (this.fragmentation < ((LinkTable) o).fragmentation)
             return -1;
         else return 0;
     }
