@@ -22,56 +22,29 @@ public class LinkTable implements Comparable {
 
     }
 
-    public void calculateFragmentation() {
-        fragmentation = 0;
-        try {
-            for (int i = 0; i < linkIDs.size(); i++) {
-                List<Double> linkWavelengths = getLinkWavelengths(i);
-                if (linkWavelengths.size() == 0) {
-
-                } else
-                    fragmentation += calculateFragmentation(linkWavelengths);
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private List<Double> getLinkWavelengths(int i) {
-        List<Double> linkWavelengths = new ArrayList<>();
-        for (int j = 0; j < wavelengths.size(); j++) {
-            if (table[i][j] != null) {
-                linkWavelengths.add(wavelengths.get(j));
-            }
-        }
-        return linkWavelengths;
-    }
-
-    private double calculateFragmentation(List<Double> linkWavelengths) {
-        freeMax = -999;
-        free = 0;
-        double t = 0.1;
-        for (int i = 0; i < linkWavelengths.size() - 1; i++) {
-            double point1 = linkWavelengths.get(i);
-            double point2 = linkWavelengths.get(i + 1);
-            double separation = (point2 - t) - (point1 + t);
-            free += separation;
-            if (separation > freeMax)
-                freeMax = separation;
-        }
-
-        return (free - freeMax) / free;
-    }
-
     public double getFragmentation() {
         return fragmentation;
     }
 
+    public void setFragmentation(double frag) {
+        this.fragmentation = frag;
+    }
+
     public void buildTable() {
-        setAxes();
+        // populate arrays used as axis indices
+        setAxes();        // initialize lightpath table
         table = new String[linkIDs.size()][wavelengths.size()];
+        setTable(); // set all table entries as empty strings
         for (LightPath lightPath : lightPaths) {
             insertLightPathToTable(lightPath);
+        }
+    }
+
+    private void setTable() {
+        for (int i = 0; i < linkIDs.size(); i++) {
+            for (int j = 0; j < wavelengths.size(); j++) {
+                table[i][j] = "";
+            }
         }
     }
 
@@ -85,6 +58,9 @@ public class LinkTable implements Comparable {
     }
 
     private int getLinkIndex(String id) {
+        // input : id of a given link
+        // output : index of given link in index array
+        //          OR -1 if link not found
         for (String s : linkIDs) {
             if (s.equals(id))
                 return linkIDs.indexOf(s);
@@ -93,6 +69,9 @@ public class LinkTable implements Comparable {
     }
 
     private int getWavelengthIndex(double wavelength) {
+        // input : value of a given wavelength
+        // output : index of given wavelength in index array
+        //          OR -1 if wavelength not found
         for (Double d : wavelengths) {
             if (d.equals(wavelength))
                 return wavelengths.indexOf(d);
@@ -101,6 +80,7 @@ public class LinkTable implements Comparable {
     }
 
     private void setAxes() {
+        // finds unique linkIDs and wavelength values and populates index arrays/axes
         linkIDs = new ArrayList<>();
         List<Double> counter = new ArrayList<>();
         for (LightPath lightPath : lightPaths) {
@@ -108,12 +88,14 @@ public class LinkTable implements Comparable {
                 if (linkIDs.size() == 0) {
                     linkIDs.add(id);
                 } else if (!linkIDs.contains(id)) {
-                    addLinkID(id);
+                    //addLinkID(id);
+                    linkIDs.add(id);
                 }
             }
             if (!counter.contains(lightPath.getWavelength()))
                 counter.add(lightPath.getWavelength());
         }
+        Collections.sort(linkIDs);
         wavelengths = new ArrayList<>();
 
         for (int i = 0; i < counter.size(); i++) {
@@ -122,44 +104,6 @@ public class LinkTable implements Comparable {
 
         }
         Collections.sort(wavelengths);
-    }
-
-    private void addWavelengthID(double wavelength) {
-        if (wavelengths.size() == 1) {
-            if (wavelength > wavelengths.get(0))
-                wavelengths.add(1, wavelength);
-            else
-                wavelengths.add(0, wavelength);
-        } else {
-            for (int i = 0; i < wavelengths.size(); i++) {
-                if (i == wavelengths.size() - 1) {
-                    wavelengths.add(i + 1, wavelength);
-                    return;
-                } else if (wavelength > wavelengths.get(i) && wavelength < wavelengths.get(i + 1)) {
-                    wavelengths.add(i + 1, wavelength);
-                    return;
-                }
-            }
-        }
-    }
-
-    private void addLinkID(String id) {
-        if (linkIDs.size() == 1) {
-            if (id.compareTo(linkIDs.get(0)) > 0) {
-                linkIDs.add(1, id);
-
-            } else linkIDs.add(0, id);
-        } else {
-            for (int i = 0; i < linkIDs.size(); i++) {
-                if (i == linkIDs.size() - 1) {
-                    linkIDs.add(i + 1, id);
-                    return;
-                } else if (id.compareTo(linkIDs.get(i)) > 0 && id.compareTo(linkIDs.get(i + 1)) < 0) {
-                    linkIDs.add(i + 1, id);
-                    return;
-                }
-            }
-        }
     }
 
     SecureRandom random = new SecureRandom();

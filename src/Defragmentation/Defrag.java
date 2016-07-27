@@ -18,7 +18,7 @@ public class Defrag {
     TableBuilder tableBuilder;
     LinkTable linkTable;
     GeneticProgram geneticProgram;
-    LinkTableOutput tableWriter = new LinkTableOutput("c:/users/fubar/ideaprojects/aco project/tableOutput.xls");
+    LinkTableOutput tableWriter = new LinkTableOutput("C://Users//FuBaR//Documents//ACO-New Pheromone/tableOutput.xls");
 
     public Defrag(List<Node> nodes) {
 
@@ -27,13 +27,13 @@ public class Defrag {
         tableBuilder = new TableBuilder(lightPaths);
         tableBuilder.buildTable();
         linkTable = tableBuilder.linkTable;
-        /*try {
+        try {
             tableWriter.write(linkTable);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (WriteException e) {
             e.printStackTrace();
-        }*/
+        }
         geneticProgram = new GeneticProgram(linkTable);
     }
 }
