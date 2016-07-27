@@ -148,19 +148,21 @@ public class LinkTable implements Comparable {
     }
 
     public LinkTable crossover(LinkTable other) {
-        LinkTable newLinkTable = new LinkTable();
+        LinkTable newLinkTable = new LinkTable(this, other);
         return newLinkTable;
     }
 
     public LinkTable(LinkTable A, LinkTable B) {
-        int crossoverPoint = Math.round(A.wavelengths.size() / 2);
-        table = new String[A.linkIDs.size()][A.wavelengths.size()];
-        for (int i = 0; i < A.linkIDs.size(); i++) {
+        this.wavelengths = A.wavelengths;
+        this.linkIDs = A.getLinkIDs();
+        int crossoverPoint = Math.round(wavelengths.size() / 2);
+        table = new String[linkIDs.size()][wavelengths.size()];
+        for (int i = 0; i < linkIDs.size(); i++) {
             for (int j = 0; j < crossoverPoint; j++) {
-                table[i][j] = A.getTable()[i][j];
+                table[i][j] = A.getTableEntry(i, j);
             }
             for (int k = crossoverPoint; k < wavelengths.size(); k++) {
-                table[i][k] = B.getTable()[i][k];
+                table[i][k] = B.getTableEntry(i, k);
             }
         }
         this.lightPaths = A.lightPaths;
@@ -201,8 +203,8 @@ public class LinkTable implements Comparable {
     }
 
     private int getRandomWavelengthIndex() {
-        Random random = new Random(wavelengths.size());
-        return random.nextInt();
+        Random random = new Random();
+        return random.nextInt(wavelengths.size());
     }
 
     @Override

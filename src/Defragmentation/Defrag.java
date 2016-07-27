@@ -27,13 +27,13 @@ public class Defrag {
         tableBuilder = new TableBuilder(lightPaths);
         tableBuilder.buildTable();
         linkTable = tableBuilder.linkTable;
-        try {
+        /*try {
             tableWriter.write(linkTable);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (WriteException e) {
             e.printStackTrace();
-        }
+        }*/
         geneticProgram = new GeneticProgram(linkTable);
     }
 }

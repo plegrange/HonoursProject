@@ -26,20 +26,20 @@ public class Selector {
         listA = chromosomes;
         listB = new ArrayList<>();
         while (listB.size() < P) {
-            listB.add(selectSemiElite(listA));
+            listB.add(removeSemiElite(listA));
         }
         return listB;
     }
 
-    private LinkTable selectSemiElite(List<LinkTable> chromosomes) {
+    private LinkTable removeSemiElite(List<LinkTable> chromosomes) {
         Random random = new Random();
         if (random.nextDouble() > 0.5)
-            return selectBest(chromosomes);
+            return removeBest(chromosomes);
         else
-            return selectRandom(chromosomes);
+            return removeRandom(chromosomes);
     }
 
-    private LinkTable selectBest(List<LinkTable> list) {
+    private LinkTable removeBest(List<LinkTable> list) {
         double min = 999;
         LinkTable best = null;
         for (LinkTable table : list) {
@@ -48,7 +48,15 @@ public class Selector {
                 min = best.getFragmentation();
             }
         }
+        listA.remove(best);
         return best;
+    }
+
+    private LinkTable removeRandom(List<LinkTable> list) {
+        int random = (new Random()).nextInt(list.size());
+        LinkTable toRemove = list.get(random);
+        listA.remove(toRemove);
+        return toRemove;
     }
 
     private LinkTable selectRandom(List<LinkTable> list) {

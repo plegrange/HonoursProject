@@ -1,7 +1,6 @@
 package Defragmentation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,7 +21,7 @@ public class GeneticProgram {
         initializePop();
 
         //test fitness for each individual
-        testFitness(chromosomes);
+        testFragmentation(chromosomes);
 
         //displayChromosomes();
 
@@ -31,7 +30,7 @@ public class GeneticProgram {
         //crossoverList until P individuals are created
 
         //Test fitness of new individuals
-        testFitness(crossoverList);
+        testFragmentation(crossoverList);
 
         //merge populations
         chromosomes = merger.merge(chromosomes, crossoverList);
@@ -39,7 +38,7 @@ public class GeneticProgram {
         //semi-elitist selection of P/2P individuals for mutation
         mutationList = selector.mutationSelection(chromosomes, P);
         mutationList = mutator.mutate(mutationList);
-        testFitness(mutationList);
+        testFragmentation(mutationList);
 
         //merge populations
         chromosomes = merger.merge(chromosomes, mutationList);
@@ -66,7 +65,7 @@ public class GeneticProgram {
         }
     }
 
-    private void testFitness(List<LinkTable> test) {
+    private void testFragmentation(List<LinkTable> test) {
         for (LinkTable table : test) {
             fragmentationTester.calculateFragmentation(table);
         }
