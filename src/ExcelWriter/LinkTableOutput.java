@@ -5,8 +5,6 @@ package ExcelWriter;
  */
 
 import Defragmentation.LinkTable;
-import Test.Link;
-import Test.Signal;
 import jxl.CellView;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
@@ -17,7 +15,6 @@ import jxl.write.biff.RowsExceededException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,6 +43,7 @@ public class LinkTableOutput {
 
         workbook.write();
         workbook.close();
+        System.out.println("Table written to " + outputFile);
     }
 
 
@@ -79,14 +77,14 @@ public class LinkTableOutput {
         List<String> linkIDs = linkTable.getLinkIDs();
         String[][] table = linkTable.getTable();
         for (int i = 1; i <= linkIDs.size(); i++) {
-            addString(sheet, i, 0, linkIDs.get(i-1));
+            addString(sheet, i, 0, linkIDs.get(i - 1));
         }
         for (int i = 1; i <= wavelengths.size(); i++) {
-            addNumber(sheet, 0, i, wavelengths.get(i-1));
+            addNumber(sheet, 0, i, wavelengths.get(i - 1));
         }
         for (int i = 1; i <= linkIDs.size(); i++) {
             for (int j = 1; j <= wavelengths.size(); j++) {
-                addString(sheet, i, j, table[i-1][j-1]);
+                addString(sheet, i, j, table[i - 1][j - 1]);
             }
         }
 

@@ -106,7 +106,7 @@ public class LinkTable implements Comparable {
         Collections.sort(wavelengths);
     }
 
-    SecureRandom random = new SecureRandom();
+    Random random = new Random();
 
     private double getRandomDouble() {
         return minWavelength + (maxWavelength - minWavelength) * random.nextDouble();
@@ -155,46 +155,48 @@ public class LinkTable implements Comparable {
     public LinkTable(LinkTable A, LinkTable B) {
         this.wavelengths = A.wavelengths;
         this.linkIDs = A.getLinkIDs();
-        int crossoverPoint = Math.round(wavelengths.size() / 2);
-        table = new String[linkIDs.size()][wavelengths.size()];
-        for (int i = 0; i < linkIDs.size(); i++) {
-            for (int j = 0; j < crossoverPoint; j++) {
-                table[i][j] = A.getTableEntry(i, j);
-            }
-            for (int k = crossoverPoint; k < wavelengths.size(); k++) {
-                table[i][k] = B.getTableEntry(i, k);
-            }
-        }
+        int crossoverPoint = Math.round(A.lightPaths.size() / 2);
         this.lightPaths = A.lightPaths;
+        //table = new String[linkIDs.size()][wavelengths.size()];
+        //setTable();
+        for (LightPath lightPath : lightPaths) {
+            lightPath.setWavelength(selectWavelength(A, B, lightPath.id));
+            //insertLightPathToTable(lightPath);
+        }
+        buildTable();
+
+    }
+
+    private double selectWavelength(LinkTable A, LinkTable B, String id) {
+        LightPath a, b;
+        a = A.getLightPath(id);
+        b = B.getLightPath(id);
+        double random = (new Random()).nextDouble();
+        if (random >= 0.5) {
+            return a.getWavelength();
+        } else
+            return b.getWavelength();
     }
 
     public void mutate() {
-        String[] temp = new String[linkIDs.size()];
-        int j = getRandomWavelengthIndex();
-        for (int i = 0; i < linkIDs.size(); i++) {
-            temp[i] = table[i][j];
-        }
-        int k = getRandomWavelengthIndex();
-        for (int i = 0; i < linkIDs.size(); i++) {
-            table[i][k] = table[i][j];
-            table[i][j] = temp[i];
-        }
-        updateLightPaths(j);
-        updateLightPaths(k);
+        SecureRandom random = new SecureRandom();
+        for (int i = 0; i < 10; i++) {
+            lightPaths.get(random.nextInt(lightPaths.size())).setWavelength(getRandomDouble());
+            buildTable();}
     }
 
     private void updateLightPaths(int j) {
         String cur = "-";
         for (int i = 0; i < linkIDs.size(); i++) {
             if (!table[i][j].equals(cur)) {
-                changeLightPathWavelength(getTableEntry(i,j),wavelengths.get(j));
+                changeLightPathWavelength(getTableEntry(i, j), wavelengths.get(j));
                 //getLightPath(table[i][j]).setWavelength(wavelengths.get(j));
                 cur = table[i][j];
             }
         }
     }
 
-    private void changeLightPathWavelength(String id, double wavelength){
+    private void changeLightPathWavelength(String id, double wavelength) {
         for (LightPath lightPath : lightPaths) {
             if (Objects.equals(lightPath.id, id)) {
                 lightPath.setWavelength(wavelength);

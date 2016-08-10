@@ -9,8 +9,8 @@ import java.util.List;
 public class GeneticProgram {
     private List<LinkTable> chromosomes, temp, crossoverList, mutationList, newList;
     private int P = 100;
-    int alpha = P / 2;
-    LinkTable linkTable;
+    int alpha = P / 4;
+    LinkTable linkTable, bestLinkTable;
     FragmentationTester fragmentationTester = new FragmentationTester();
     Selector selector = new Selector();
     Mutator mutator = new Mutator();
@@ -27,13 +27,13 @@ public class GeneticProgram {
         //test fitness for each individual
         testFragmentation(chromosomes);
         //displayChromosomes();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             run();
         }
         //displayChromosomes();
-        linkTable = selector.getBest(chromosomes);
+        bestLinkTable = selector.getBest(chromosomes);
         //pairwise roulette wheel selection for crossoverList
-        linkTable.displayFitness();
+        bestLinkTable.displayFitness();
     }
 
     private void run() {
@@ -66,7 +66,6 @@ public class GeneticProgram {
             crossoverList.add(temp.get(0).crossover(temp.get(1)));
         }
     }
-
 
 
     private void initializePop() {

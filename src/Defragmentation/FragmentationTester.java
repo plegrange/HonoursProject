@@ -33,6 +33,7 @@ public class FragmentationTester {
             e.printStackTrace();
         }
         linkTable.setFragmentation(fragmentation);
+        //System.out.println(fragmentation);
     }
 
     private List<Double> getLinkWavelengths(int i) {

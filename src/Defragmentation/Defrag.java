@@ -1,7 +1,6 @@
 package Defragmentation;
 
 import ExcelWriter.LinkTableOutput;
-import Test.Link;
 import Test.Node;
 import jxl.write.WriteException;
 
@@ -16,9 +15,11 @@ public class Defrag {
     LightPathBuilder lightPathBuilder;
     List<LightPath> lightPaths;
     TableBuilder tableBuilder;
-    LinkTable linkTable;
+    LinkTable linkTableInitial, linkTableFinal;
     GeneticProgram geneticProgram;
-    LinkTableOutput tableWriter = new LinkTableOutput("C://Users//FuBaR//Documents//ACO-New Pheromone/tableOutput.xls");
+    LinkTableOutput initialTableWriter = new LinkTableOutput("C://Users//FuBaR//Documents//ACO-New Pheromone/initial.xls");
+    LinkTableOutput finalTableWriter = new LinkTableOutput("C://Users//FuBaR//Documents//ACO-New Pheromone/final.xls");
+    LinkTableValidator validator;
 
     public Defrag(List<Node> nodes) {
 
@@ -26,15 +27,24 @@ public class Defrag {
         lightPaths = lightPathBuilder.build();
         tableBuilder = new TableBuilder(lightPaths);
         tableBuilder.buildTable();
-        linkTable = tableBuilder.linkTable;
-        /*try {
-            tableWriter.write(linkTable);
+        linkTableInitial = tableBuilder.linkTable;
+        try {
+            initialTableWriter.write(linkTableInitial);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (WriteException e) {
             e.printStackTrace();
-        }*/
-        geneticProgram = new GeneticProgram(linkTable);
-        linkTable = geneticProgram.linkTable;
+        }
+        geneticProgram = new GeneticProgram(linkTableInitial);
+        linkTableFinal = geneticProgram.bestLinkTable;
+        validator = new LinkTableValidator(linkTableInitial, linkTableFinal);
+        try {
+            finalTableWriter.write(linkTableFinal);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (WriteException e) {
+            e.printStackTrace();
+        }
+        System.out.println(validator.check());
     }
 }
