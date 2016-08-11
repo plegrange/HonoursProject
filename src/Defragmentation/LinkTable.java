@@ -104,6 +104,10 @@ public class LinkTable implements Comparable {
 
         }
         Collections.sort(wavelengths);
+
+        if (wavelengths.size() != lightPaths.size()) {
+            System.out.print("");
+        }
     }
 
     Random random = new Random();
@@ -140,7 +144,8 @@ public class LinkTable implements Comparable {
     }
 
     public void displayFitness() {
-        System.out.println("Fragmentation: " + fragmentation);
+        String s = String.format("%.2f", fragmentation);
+        System.out.print(s + "% ");
     }
 
     public String getTableEntry(int i, int j) {
@@ -155,34 +160,74 @@ public class LinkTable implements Comparable {
     public LinkTable(LinkTable A, LinkTable B) {
         this.wavelengths = A.wavelengths;
         this.linkIDs = A.getLinkIDs();
-        int crossoverPoint = Math.round(A.lightPaths.size() / 2);
         this.lightPaths = A.lightPaths;
+        int crossoverPoint = (new Random()).nextInt(this.lightPaths.size());
         //table = new String[linkIDs.size()][wavelengths.size()];
         //setTable();
+        int crossoverCounter = 0;
+        boolean cross = false;
         for (LightPath lightPath : lightPaths) {
-            lightPath.setWavelength(selectWavelength(A, B, lightPath.id));
+            if (crossoverCounter >= crossoverPoint)
+                cross = true;
+            lightPath.setWavelength(selectWavelength(A, B, lightPath.id, cross));
+            crossoverCounter++;
             //insertLightPathToTable(lightPath);
         }
         buildTable();
-
     }
 
-    private double selectWavelength(LinkTable A, LinkTable B, String id) {
+    private double selectWavelength(LinkTable A, LinkTable B, String id, boolean cross) {
         LightPath a, b;
         a = A.getLightPath(id);
         b = B.getLightPath(id);
-        double random = (new Random()).nextDouble();
-        if (random >= 0.5) {
-            return a.getWavelength();
-        } else
+        if (cross) {
             return b.getWavelength();
+        } else
+            return a.getWavelength();
     }
 
     public void mutate() {
         SecureRandom random = new SecureRandom();
-        for (int i = 0; i < 10; i++) {
-            lightPaths.get(random.nextInt(lightPaths.size())).setWavelength(getRandomDouble());
-            buildTable();}
+        double bestWavelength = getSmallestAvailableSpace();
+        if (bestWavelength == -1) return;
+        lightPaths.get(random.nextInt(lightPaths.size())).setWavelength(bestWavelength);
+        buildTable();
+        if (wavelengths.size() != lightPaths.size()) {
+            //  System.out.print(" ");
+        }
+    }
+
+    private double getSmallestAvailableSpace() {
+        double t = 0.5;
+        double freeMin = 9999;
+        int bestIndex = 0;
+        double point1 = minWavelength;
+        double point2, separation, bestSeparation = t;
+        int i;
+        for (i = 1; i <= wavelengths.size(); i++) {
+            point2 = wavelengths.get(i - 1);
+            separation = (point2 - t) - (point1 + t);
+
+            if ((separation < freeMin) && (separation > 2 * t)) {
+                freeMin = separation;
+                bestIndex = i;
+                bestSeparation = separation;
+            }
+            point1 = point2;
+        }
+        point2 = maxWavelength;
+        separation = (point2 - t) - (point1 + t);
+        if ((separation < freeMin) && (separation > 2 * t)) {
+            //freeMin = separation;
+           // bestIndex = wavelengths.size();
+            bestSeparation = separation;
+            return maxWavelength - bestSeparation / 2;
+        }
+        if(bestIndex==0){
+            return minWavelength + bestSeparation/2;
+        }
+        return wavelengths.get(bestIndex-1) - bestSeparation / 2;
+
     }
 
     private void updateLightPaths(int j) {

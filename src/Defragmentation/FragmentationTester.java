@@ -32,7 +32,8 @@ public class FragmentationTester {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        linkTable.setFragmentation(fragmentation);
+        linkTable.setFragmentation(fragmentation / linkTable.linkIDs.size() * 100);
+        //linkTable.displayFitness();
         //System.out.println(fragmentation);
     }
 
@@ -54,14 +55,22 @@ public class FragmentationTester {
         freeMax = -999;
         free = 0;
         double t = 0.1;
-        for (int i = 0; i < linkWavelengths.size() - 1; i++) {
-            double point1 = linkWavelengths.get(i);
-            double point2 = linkWavelengths.get(i + 1);
-            double separation = (point2 - t) - (point1 + t);
+        double point1 = minWavelength;
+        double point2;
+        double separation;
+        for (int i = 0; i < linkWavelengths.size(); i++) {
+            point2 = linkWavelengths.get(i);
+            separation = (point2 - t) - (point1 + t);
             free += separation;
             if (separation > freeMax)
                 freeMax = separation;
+            point1 = point2;
         }
+        point2 = maxWavelength;
+        separation = (point2 - t) - (point1 + t);
+        free += separation;
+        if (separation > freeMax)
+            freeMax = separation;
 
         return (free - freeMax) / free;
     }

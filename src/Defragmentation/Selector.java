@@ -34,7 +34,7 @@ public class Selector {
 
     private LinkTable removeSemiElite(List<LinkTable> chromosomes) {
         Random random = new Random();
-        if (random.nextDouble() > 0.5)
+        if (random.nextDouble() >= 0.5)
             return removeBest(chromosomes);
         else
             return removeRandom(chromosomes);

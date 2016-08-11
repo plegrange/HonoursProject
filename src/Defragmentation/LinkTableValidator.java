@@ -22,7 +22,13 @@ public class LinkTableValidator {
             } else
                 return false;
         }
+        displayImprovement();
         return true;
+    }
+
+    private void displayImprovement(){
+        String s = String.format("%.2f", _initial.getFragmentation()-_final.getFragmentation());
+        System.out.println( s+ "%");
     }
 
     private List<LightPath> removeLightPath(List<LightPath> list, LightPath item) {
