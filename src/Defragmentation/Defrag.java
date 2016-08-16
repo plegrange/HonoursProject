@@ -17,8 +17,8 @@ public class Defrag {
     TableBuilder tableBuilder;
     LinkTable linkTableInitial, linkTableFinal;
     GeneticProgram geneticProgram;
-    LinkTableOutput initialTableWriter = new LinkTableOutput("C://Users//FuBaR//Documents//ACO-New Pheromone/initial.xls");
-    LinkTableOutput finalTableWriter = new LinkTableOutput("C://Users//FuBaR//Documents//ACO-New Pheromone/final.xls");
+    LinkTableOutput initialTableWriter = new LinkTableOutput("C://Users//s213391244//IdeaProjects//HonoursProject/initial.xls");
+    LinkTableOutput finalTableWriter = new LinkTableOutput("C://Users//s213391244//IdeaProjects//HonoursProject/final.xls");
     LinkTableValidator validator;
 
     public Defrag(List<Node> nodes) {

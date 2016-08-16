@@ -97,12 +97,13 @@ public class LinkTable implements Comparable {
         }
         Collections.sort(linkIDs);
         wavelengths = new ArrayList<>();
-
+        wavelengths.add(minWavelength);
         for (int i = 0; i < counter.size(); i++) {
 
             wavelengths.add(counter.get(i));
 
         }
+        wavelengths.add(maxWavelength);
         Collections.sort(wavelengths);
 
         if (wavelengths.size() != lightPaths.size()) {
@@ -190,7 +191,10 @@ public class LinkTable implements Comparable {
         SecureRandom random = new SecureRandom();
         double bestWavelength = getSmallestAvailableSpace();
         if (bestWavelength == -1) return;
-        lightPaths.get(random.nextInt(lightPaths.size())).setWavelength(bestWavelength);
+        LightPath lightPath = lightPaths.remove(random.nextInt(lightPaths.size()));
+        wavelengths.remove(lightPath.wavelength);
+        lightPath.setWavelength(getSmallestAvailableSpace());
+        lightPaths.add(lightPath);
         buildTable();
         if (wavelengths.size() != lightPaths.size()) {
             //  System.out.print(" ");
@@ -198,36 +202,18 @@ public class LinkTable implements Comparable {
     }
 
     private double getSmallestAvailableSpace() {
-        double t = 0.5;
+        double t = 1;
         double freeMin = 9999;
         int bestIndex = 0;
-        double point1 = minWavelength;
-        double point2, separation, bestSeparation = t;
-        int i;
-        for (i = 1; i <= wavelengths.size(); i++) {
-            point2 = wavelengths.get(i - 1);
-            separation = (point2 - t) - (point1 + t);
-
-            if ((separation < freeMin) && (separation > 2 * t)) {
+        double separation, bestSeparation;
+        for (int i = 0; i < wavelengths.size() - 1; i++) {
+            separation = wavelengths.get(i + 1) - wavelengths.get(i);
+            if (separation < freeMin && separation > 2.0 * t) {
                 freeMin = separation;
                 bestIndex = i;
-                bestSeparation = separation;
             }
-            point1 = point2;
         }
-        point2 = maxWavelength;
-        separation = (point2 - t) - (point1 + t);
-        if ((separation < freeMin) && (separation > 2 * t)) {
-            //freeMin = separation;
-           // bestIndex = wavelengths.size();
-            bestSeparation = separation;
-            return maxWavelength - bestSeparation / 2;
-        }
-        if(bestIndex==0){
-            return minWavelength + bestSeparation/2;
-        }
-        return wavelengths.get(bestIndex-1) - bestSeparation / 2;
-
+        return (wavelengths.get(bestIndex) + (t));
     }
 
     private void updateLightPaths(int j) {

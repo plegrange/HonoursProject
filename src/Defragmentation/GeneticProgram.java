@@ -27,7 +27,7 @@ public class GeneticProgram {
         //test fitness for each individual
         testFragmentation(chromosomes);
         //displayChromosomes();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10; i++) {
             run();
             //bestLinkTable = selector.getBest(chromosomes);
             //bestLinkTable.displayFitness();
