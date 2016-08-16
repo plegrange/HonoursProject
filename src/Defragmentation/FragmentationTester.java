@@ -18,6 +18,10 @@ public class FragmentationTester {
         calculateFragmentation();
     }
 
+    private void penalizeCollisions() {
+
+    }
+
     private void calculateFragmentation() {
         //
         fragmentation = 0;
@@ -58,12 +62,18 @@ public class FragmentationTester {
         double point1 = minWavelength;
         double point2;
         double separation;
+        int collisionsDetected = 0;
         for (int i = 0; i < linkWavelengths.size(); i++) {
             point2 = linkWavelengths.get(i);
+
             separation = (point2 - t) - (point1 + t);
-            free += separation;
-            if (separation > freeMax)
-                freeMax = separation;
+            if (separation < 0)
+                collisionsDetected++;
+            else {
+                free += separation;
+                if (separation > freeMax)
+                    freeMax = separation;
+            }
             point1 = point2;
         }
         point2 = maxWavelength;
@@ -71,7 +81,6 @@ public class FragmentationTester {
         free += separation;
         if (separation > freeMax)
             freeMax = separation;
-
-        return (free - freeMax) / free;
+        return (free - freeMax) / free + collisionsDetected / linkWavelengths.size();
     }
 }

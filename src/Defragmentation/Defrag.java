@@ -17,8 +17,11 @@ public class Defrag {
     TableBuilder tableBuilder;
     LinkTable linkTableInitial, linkTableFinal;
     GeneticProgram geneticProgram;
-    LinkTableOutput initialTableWriter = new LinkTableOutput("C://Users//s213391244//IdeaProjects//HonoursProject/initial.xls");
-    LinkTableOutput finalTableWriter = new LinkTableOutput("C://Users//s213391244//IdeaProjects//HonoursProject/final.xls");
+
+    LinkTableOutput initialTableWriter = new LinkTableOutput("initial.xls");
+    LinkTableOutput finalTableWriter = new LinkTableOutput("final.xls");
+    //LinkTableOutput initialTableWriter = new LinkTableOutput("C://Users//FuBaR//Documents//ACO-New Pheromone/initial.xls");
+    //LinkTableOutput finalTableWriter = new LinkTableOutput("C://Users//FuBaR//Documents//ACO-New Pheromone/final.xls");
     LinkTableValidator validator;
 
     public Defrag(List<Node> nodes) {
@@ -45,6 +48,6 @@ public class Defrag {
         } catch (WriteException e) {
             e.printStackTrace();
         }
-        System.out.println(validator.check());
+        System.out.println(validator.checkTable());
     }
 }

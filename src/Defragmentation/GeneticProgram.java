@@ -8,8 +8,8 @@ import java.util.List;
  */
 public class GeneticProgram {
     private List<LinkTable> chromosomes, temp, crossoverList, mutationList, newList;
-    private int P = 200;
-    int alpha = P / 20;
+    private int P = 50;
+    int alpha = P / 10;
     LinkTable linkTable, bestLinkTable;
     FragmentationTester fragmentationTester = new FragmentationTester();
     Selector selector = new Selector();
@@ -22,21 +22,24 @@ public class GeneticProgram {
         this.linkTable = linkTable;
         fragmentationTester.calculateFragmentation(linkTable);
         linkTable.displayFitness();
+        System.out.println();
         initializePop();
 
         //test fitness for each individual
         testFragmentation(chromosomes);
         //displayChromosomes();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             run();
-            //bestLinkTable = selector.getBest(chromosomes);
-            //bestLinkTable.displayFitness();
-            //System.out.println();
+            bestLinkTable = selector.getBest(chromosomes);
+            bestLinkTable.displayFitness();
+            System.out.println();
+
         }
         //displayChromosomes();
         bestLinkTable = selector.getBest(chromosomes);
         //pairwise roulette wheel selection for crossoverList
         bestLinkTable.displayFitness();
+
     }
 
     private void run() {

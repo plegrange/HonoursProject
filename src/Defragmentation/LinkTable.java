@@ -111,10 +111,10 @@ public class LinkTable implements Comparable {
         }
     }
 
-    Random random = new Random();
+    SecureRandom initialRandom;// = new SecureRandom();
 
-    private double getRandomDouble() {
-        return minWavelength + (maxWavelength - minWavelength) * random.nextDouble();
+    private double getInitialRandomDouble() {
+        return minWavelength + (maxWavelength - minWavelength) * initialRandom.nextDouble();
     }
 
     public List<Double> getWavelengths() {
@@ -130,15 +130,15 @@ public class LinkTable implements Comparable {
     }
 
     public LinkTable getRandomTable() {
-        LinkTable newLinkTable = new LinkTable();
-        newLinkTable = initializeRandomTable(lightPaths, newLinkTable);
+        LinkTable newLinkTable = new LinkTable(lightPaths);
+        newLinkTable = initializeRandomTable(newLinkTable);
         return newLinkTable;
     }
 
-    private LinkTable initializeRandomTable(List<LightPath> lightPaths, LinkTable newLinkTable) {
-        newLinkTable.lightPaths = lightPaths;
+    private LinkTable initializeRandomTable(LinkTable newLinkTable) {
+        initialRandom = new SecureRandom();
         for (LightPath lightPath : newLinkTable.lightPaths) {
-            lightPath.setWavelength(getRandomDouble());
+            lightPath.setWavelength(getInitialRandomDouble());
         }
         newLinkTable.buildTable();
         return newLinkTable;
@@ -188,9 +188,8 @@ public class LinkTable implements Comparable {
     }
 
     public void mutate() {
-        SecureRandom random = new SecureRandom();
-        double bestWavelength = getSmallestAvailableSpace();
-        if (bestWavelength == -1) return;
+        Random random = new Random();
+
         LightPath lightPath = lightPaths.remove(random.nextInt(lightPaths.size()));
         wavelengths.remove(lightPath.wavelength);
         lightPath.setWavelength(getSmallestAvailableSpace());
@@ -201,19 +200,43 @@ public class LinkTable implements Comparable {
         }
     }
 
+    private double getMutationWavelength(double min, double max) {
+        Random random = new Random();
+        double randomWavelength = min + (max - min) * random.nextDouble();
+        while (wavelengths.contains(randomWavelength)) {
+            randomWavelength = min + (max - min) * random.nextDouble();
+        }
+        return randomWavelength;
+    }
+
+    private double getLargestGap() {
+        double largestGapMin = 0, largestGapMax = 0;
+        double largestSeparation = -9999;
+        for (int i = 0; i < wavelengths.size() - 1; i++) {
+            double separation = wavelengths.get(i + 1) - wavelengths.get(i);
+            if (separation > largestSeparation) {
+                largestSeparation = separation;
+                largestGapMin = wavelengths.get(i);
+                largestGapMax = largestGapMin + separation;
+            }
+        }
+        return getMutationWavelength(largestGapMin, largestGapMax);
+    }
+
     private double getSmallestAvailableSpace() {
-        double t = 1;
+        double t = 0.1;
         double freeMin = 9999;
-        int bestIndex = 0;
+        double bestMin = 0, bestMax = 0;
         double separation, bestSeparation;
         for (int i = 0; i < wavelengths.size() - 1; i++) {
             separation = wavelengths.get(i + 1) - wavelengths.get(i);
             if (separation < freeMin && separation > 2.0 * t) {
                 freeMin = separation;
-                bestIndex = i;
+                bestMin = wavelengths.get(i);
+                bestMax = bestMin + separation;
             }
         }
-        return (wavelengths.get(bestIndex) + (t));
+        return getMutationWavelength(bestMin+2*t, bestMax-2*t);
     }
 
     private void updateLightPaths(int j) {
