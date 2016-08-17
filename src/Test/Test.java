@@ -24,8 +24,7 @@ public class Test {
     int NrSignalsPerTime;
     double createWaveProb;
     int noWaves;
-    WriteExcel writer = new WriteExcel("c:/users/fubar/ideaprojects/aco project/report.xls");
-
+    WriteExcel writer = new WriteExcel("report.xls");
 
     public Test(ArrayList<Node> nodes, ArrayList<Link> links, RoutingTable table, ACO ac, int s1, int s2) {
         this.ac = ac;
@@ -95,7 +94,6 @@ public class Test {
             }
             ac.TimeStep();
         }
-
 
         System.out.println(ac.success + " Successes");
         System.out.println(ac.blocked + " Blocks");
